@@ -6,14 +6,17 @@ const writeStream = fs.createWriteStream(filename.join(__dirname, 'newText.txt')
 let enterText = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    terminal: false,
+    terminal: true,
 });
-console.log('Введите текст');
-
-enterText.on('line', (line) => {
-    writeStream.write(`${line} \n`);
-    if (line === "exit") {
-        // console.log(`exit:${line}`);
+console.log('Введите текст (после ввода нажмите [enter])');
+enterText.on('line', (input) => {
+    if (input !== "exit") {
+        writeStream.write(`${input}\n`);
+    } else {
+        console.log('процесс ввода завершен');
         enterText.close();
     }
+}).on('SIGINT', () => {
+    console.log('процесс ввода завершен');
+    enterText.close();
 })
